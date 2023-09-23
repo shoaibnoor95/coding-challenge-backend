@@ -42,7 +42,7 @@ exports.handler = async function (event, context) {
             // execute if the product doesn`t found
             logger.logNotFound(`ProductList`, event)
             return response(404, {
-                message: translate('error', 'not_found')
+                message: translate('error', 'notfound')
             })
 
         }

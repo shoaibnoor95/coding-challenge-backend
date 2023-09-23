@@ -43,6 +43,7 @@ exports.handler = async function (event, context) {
         await logger.logResponse('createPage', event);
         return response(200, {
             message: translate('messages', 'success'),
+            pageID
         })
 
     } catch (error) {

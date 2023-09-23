@@ -41,7 +41,7 @@ exports.handler = async function (event, context) {
             // executes if the page doesnt exist
             await logger.logNotFound('viewPage', event)
             return response(404, {
-                message: translate('error', 'not_found')
+                message: translate('error', 'notfound')
             })
 
         }

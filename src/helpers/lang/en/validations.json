@@ -2,7 +2,8 @@
     "fail": "Whoops, something went wrong!",
     "fix": "Please fix the following!",
     "page": {
-        "exist": "Page already exist!"
+        "exist": "Page already exist!",
+        "notexist": "Page does not exist"
     },
     "condtion": {
         "exist": "Condition already exist with this answer"

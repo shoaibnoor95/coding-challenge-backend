@@ -28,10 +28,17 @@ exports.handler = async function (event, context) {
         request.query = event.queryStringParameters
             ? event.queryStringParameters
             : {}
-
+        let offset = 0
+        let pageSize = request.query.pageSize || 10
+        let page = request.query.page
+        if (page && page > 1) {
+            offset = (page - 1) * pageSize
+        }
 
         // find the list of the pages
         const pages = await Page.findAll({
+            limit: pageSize,
+            offset,
             attributes: {
                 exclude: ['createdAt', 'updatedAt'],
             },
@@ -40,7 +47,7 @@ exports.handler = async function (event, context) {
             // executes if no page found
             await logger.logRequest('listPage', event)
             return response(404, {
-                message: translate('errors', 'not_found')
+                message: translate('errors', 'notfound')
             })
         }
         // logs the response if all went good

@@ -50,7 +50,7 @@ exports.handler = async function (event, context) {
             logger.logNotFound(`ProductList`, event)
 
             return response(404, {
-                message: translate('errors', 'not_found')
+                message: translate('errors', 'notfound')
             })
 
         }

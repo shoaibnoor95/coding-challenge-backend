@@ -30,36 +30,46 @@ exports.handler = async function (event, context) {
         if (body == undefined) {
             body = {}
         }
-        // generate a new questionID
-        const questionID = await uuid()
-        // initialize an empty answer array
-        let answerID = []
-        if (body.answer && body.answers.length) {
-
-            const newAnswer = await body.answers.map((el, i) => {
-                // iterate through to get answers
-                el.answerID = uuid()
-                answerID.push(el.answerID)
-                el.value = body.value
-                questionID = questionID
-                return el
-            })
-            // save all the answer related to that question
-            await Answer.bulkCreate(newAnswer)
-        }
-        // create a new question
-        await Question.create({
-            questionID: questionID,
-            type: body.type,
-            text: body.text,
-            answerID: answerID,
-            pageID: body.pageID,
-        })
 
 
         // find a page with a subsequent pageID
         const page = await Page.findOne({ where: { pageID: body.pageID } });
         // update the questionIDs by adding the question id to the list of question that are already present 
+        if (!page) {
+            await logger.logNotFound('createQuestion', event)
+            return response(404, {
+                message: translate('validations', 'page.notexist')
+            })
+        }
+        // generate a new questionID
+        const questionID = await uuid()
+        // initialize an empty answer array
+        let answerID = []
+        if (body.answers && body.answers.length) {
+            // console.log('in body', b)
+            const newAnswer = await body.answers.map((el, i) => {
+                // iterate through to get answers
+                el.answerID = uuid()
+                answerID.push(el.answerID)
+                el.value = body.value
+                el.questionID = questionID
+                return el
+            })
+            // save all the answer related to that question
+            await Answer.bulkCreate(newAnswer)
+        }
+        console.log(answerID, 'answerID')
+        // create a new question
+        await Question.create({
+            questionID: questionID,
+            type: body.type,
+            text: body.text,
+            answerID: await answerID,
+            pageID: body.pageID,
+        })
+
+
+
         const updatedQuestionIDs = [...page.questionID, questionID];
         // finally update the page in the db too.
         await page.update({ questionID: updatedQuestionIDs });
@@ -74,6 +84,7 @@ exports.handler = async function (event, context) {
 
     } catch (error) {
         // execute in case of internal server error
+        console.log(error, 'error')
         await logger.logFailure('createQuestionaire', event, error);
         return response(500, {
             message: translate('errors', 'general'),
