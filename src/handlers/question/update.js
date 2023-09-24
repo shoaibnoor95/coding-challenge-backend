@@ -18,7 +18,7 @@ exports.handler = async function (event, context) {
     await logger.initiateLogger()
     try {
         // logs inital request
-        await logger.logRequest(`createQuestion`, event)
+        await logger.logRequest(`updateQuestion`, event)
         context.callbackWaitsForEmptyEventLoop = false
         const request = {}
         // obtain query params
@@ -43,17 +43,29 @@ exports.handler = async function (event, context) {
                 questionID: id
             }
         });
-        // logs the final response if all went good
-        await logger.logResponse(`createQuestion`, event)
-        return response(200, {
-            message: translate('messages', 'success'),
-            updatedQuestion,
-        })
+
+        if (updatedQuestion.length && updatedQuestion[0] > 0) {
+            // logs the final response if all went good
+            await logger.logResponse(`updateQuestion`, event)
+
+            return response(200, {
+                message: translate('messages', 'success'),
+                updatedQuestion,
+            })
+        } else {
+            // logs question not found
+            await logger.logNotFound(`updateQuestion`, event)
+
+            return response(404, {
+                message: translate('errors', 'notfound'),
+                updatedQuestion,
+            })
+        }
 
     } catch (error) {
 
         // execute in case of internal server error
-        await logger.logFailure(`createQuestion`, event, error)
+        await logger.logFailure(`updateQuestion`, event, error)
         return response(500, {
             message: translate('errors', 'general'),
         })

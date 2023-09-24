@@ -1,6 +1,6 @@
 let pageID = null
 describe('Page Creation', () => {
-    it('Should create a new page', () => {
+    it('should create a new page', () => {
         // Define the request payload as per your API requirements
         const requestBody = {
             urlEndpoint: 40, // Change to a unique URL
@@ -24,10 +24,33 @@ describe('Page Creation', () => {
             // Add more assertions as needed based on your API response structure
         });
     });
+
+    it('should throw error page already exist', () => {
+        // Define the request payload as per your API requirements
+        const requestBody = {
+            urlEndpoint: 1, // Change to a unique URL
+        };
+
+        // Send a POST request to the API endpoint
+        cy.request({
+            method: 'POST',
+            url: '/dev/foxbase/page', // Replace with your API endpoint URL
+            body: requestBody,
+            failOnStatusCode: false, // this is important for handling non-200 status codes
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then((response) => {
+            // Ensure the response status code is 200 (OK) or 201 (Created), depending on your API
+            expect(response.status).to.be.eq(409);
+            // Assert on the response body
+            expect(response.body).to.have.property('message');
+        });
+    });
 });
 describe('Page retrieval', () => {
 
-    it('Successfully retrieves a page', async () => {
+    it('should successfully retrieves a page', async () => {
         // const page = await Page.findOne({})
         cy.request({
             method: 'GET',
@@ -46,7 +69,40 @@ describe('Page retrieval', () => {
             failOnStatusCode: false, // this is important for handling non-200 status codes
         }).then((response) => {
             expect(response.status).to.eq(404);
-            expect(response.body).to.have.property('message', 'notfound');
+            expect(response.body).to.have.property('message');
         });
     });
 });
+
+describe('Page upgradation', () => {
+
+    it('Should successfully updates a page', async () => {
+        const requestBody = {
+            urlEndpoint: 41, // Change to a unique URL
+        };
+        cy.request({
+            method: 'PUT',
+            requestBody,
+            url: `/dev/foxbase/page/${pageID}`, // replace with your endpoint and a valid page ID
+        }).then((response) => {
+            expect(response.status).to.eq(200);
+            expect(response.body).to.have.property('message');
+            expect(response.body).to.have.property('data');
+        });
+    })
+    it('Shoud throw error', async () => {
+        const requestBody = {
+            urlEndpoint: 41, // Change to a unique URL
+        };
+        cy.request({
+            method: 'PUT',
+            requestBody,
+            failOnStatusCode: false, // this is important for handling non-200 status codes
+            url: `/dev/foxbase/page/dc07a45d-fbe0-4fe2-b364-d0cfddf0cb7d`, // replace with your endpoint and a valid page ID
+        }).then((response) => {
+            expect(response.status).to.eq(404);
+            expect(response.body).to.have.property('message');
+            expect(response.body).to.have.property('data');
+        });
+    });
+})

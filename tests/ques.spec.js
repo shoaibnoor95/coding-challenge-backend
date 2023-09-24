@@ -56,7 +56,7 @@ describe('Question Creation', () => {
         });
     });
 
-    it('Should not create a new page', () => {
+    it('Should not create a new question', () => {
 
         // Define the request payload as per your API requirements
         const requestBody = {
@@ -105,11 +105,67 @@ describe('Question retrieval', () => {
     it('Returns an error for a non-existent page', () => {
         cy.request({
             method: 'GET',
-            url: `/dev/foxbase/question/bc07a45d-fbe0-4fe2-b364-d0cfddf0cb7d`, // replace with your endpoint and a non-existent page ID
-            failOnStatusCode: false, // this is important for handling non-200 status codes
+            url: `/dev/foxbase/question/bc07a45d-fbe0-4fe2-b364-d0cfddf0cb7d`,
+            failOnStatusCode: false,
+
         }).then((response) => {
             expect(response.status).to.eq(404);
             expect(response.body).to.have.property('message');
         });
     });
+
+});
+
+describe('Question upgradation', () => {
+
+    it('Successfully updates a questions', async () => {
+        // Define the request payload as per your API requirements
+        const requestBody = {
+            "type": "card",
+            "pageID": pageID,
+            "text": "What is your updated name?",
+            "answers": [{
+                "value": "Shoaib"
+            },
+            {
+                "value": "Noor"
+            }]
+        };
+        cy.request({
+            method: 'PUT',
+            url: `/dev/foxbase/question/${quesID}`, // replace with your endpoint and a valid page ID
+            body: requestBody,
+        }).then((response) => {
+            expect(response.status).to.eq(200);
+            expect(response.body).to.have.property('message');
+            expect(response.body).to.have.property('data');
+        });
+    });
+
+    it('Should not updates a question', () => {
+
+        // Define the request payload as per your API requirements
+        const requestBody = {
+            "type": "card",
+            "pageID": "bc07a45d-fbe0-4fe2-b364-d0cfddf0cb7d",
+            "text": "What is your namesssssssssss?",
+            "answers": [{
+                "value": "Shoaib"
+            },
+            {
+                "value": "Noor"
+            }]
+        };
+        cy.request({
+            method: 'PUT',
+            url: `/dev/foxbase/question/bc07a45d-fbe0-4fe2-b364-d0cfddf0cb7d`,
+            body: requestBody,
+            failOnStatusCode: false,
+
+        }).then((response) => {
+            expect(response.status).to.eq(404);
+            expect(response.body).to.have.property('message');
+        });
+    });
+
 });

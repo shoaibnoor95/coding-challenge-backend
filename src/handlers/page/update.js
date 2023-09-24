@@ -42,6 +42,19 @@ exports.handler = async function (event, context) {
                 pageID: id
             }
         });
+
+        if (updatedPage && updatedPage[0] > 0) {
+
+            // logs the response if all went good
+            await logger.logResponse('updatePage', event)
+            // return the response
+            return response(404, {
+                message: translate('errors', 'notfound'),
+                updatedPage,
+            })
+
+        }
+
         // logs the response if all went good
         await logger.logResponse('updatePage', event)
         // return the response
