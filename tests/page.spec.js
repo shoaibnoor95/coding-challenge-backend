@@ -106,3 +106,30 @@ describe('Page upgradation', () => {
         });
     });
 })
+
+describe('Page listing retrival', () => {
+    it('should retrieve a list of pages', () => {
+        cy.request({
+            method: 'GET',
+            url: `/dev/foxbase/page?page=1&pageSize=10`
+        }).then((response) => {
+            expect(response.status).to.equal(200);
+            expect(response.body).to.have.property('message');
+            expect(response.body).to.have.property('data').to.be.an('array');
+        });
+    });
+
+    it('should return a 404 error if no pages are found', () => {
+        cy.request({ method: 'GET', url: `/dev/foxbase/page?page=10000&pageSize=1`, failOnStatusCode: false }).then((response) => {
+            expect(response.status).to.equal(404);
+            expect(response.body).to.have.property('message');
+        });
+    });
+
+    it('should return a 500 error in case of internal server error', () => {
+        cy.request({ method: 'GET', url: `/dev/foxbase/page?page=1&pageSize=abc`, failOnStatusCode: false }).then((response) => {
+            expect(response.status).to.equal(500);
+            expect(response.body).to.have.property('message');
+        });
+    });
+});

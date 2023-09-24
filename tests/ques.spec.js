@@ -169,3 +169,31 @@ describe('Question upgradation', () => {
     });
 
 });
+
+
+describe('Question listing retrival', () => {
+    it('should retrieve a list of questions', () => {
+        cy.request({
+            method: 'GET',
+            url: `/dev/foxbase/question?page=1&pageSize=3`
+        }).then((response) => {
+            expect(response.status).to.equal(200);
+            expect(response.body).to.have.property('message');
+            expect(response.body).to.have.property('data').to.be.an('array');
+        });
+    });
+
+    it('should return a 404 error if no questions are found', () => {
+        cy.request({ method: 'GET', url: `/dev/foxbase/question?page=10000&pageSize=3`, failOnStatusCode: false }).then((response) => {
+            expect(response.status).to.equal(404);
+            expect(response.body).to.have.property('message');
+        });
+    });
+
+    it('should return a 500 error in case of internal server error', () => {
+        cy.request({ method: 'GET', url: `/dev/foxbase/question?page=1&pageSize=abc`, failOnStatusCode: false }).then((response) => {
+            expect(response.status).to.equal(500);
+            expect(response.body).to.have.property('message');
+        });
+    });
+});
