@@ -1,6 +1,6 @@
 // importing database
 import '../../database'
-import { Product } from '../../models/index'
+import { Page } from '../../models/index'
 
 // importing helpers
 import translate from '../../helpers/translate'
@@ -14,16 +14,19 @@ const logger = new Logger()
  * @param {*} event
  * @param {*} context
  */
-
-exports.handler = async function (event, context) {
-    // initialize the logger
+interface Event {
+    body: any,
+    queryStringParameters?: any
+}
+export const handler = async (event: Event, context: any) => {
+    // initializing the logger
     await logger.initiateLogger()
     try {
-        // logs the initial request
-        logger.logRequest(`ProductList`, event)
+        // log the initial request
+        await logger.logRequest('listPage', event)
         context.callbackWaitsForEmptyEventLoop = false
 
-        const request = {}
+        const request = { query: { pageSize: null, page: 0 }, }
         // obtain query params
         request.query = event.queryStringParameters
             ? event.queryStringParameters
@@ -35,48 +38,31 @@ exports.handler = async function (event, context) {
             offset = (page - 1) * pageSize
         }
 
-
-
-        // find products that matches provide limit and skip (offset) criteria"
-        const product = await Product.findAll({
+        // find the list of the pages
+        const pages = await Page.findAll({
             limit: pageSize,
             offset,
             attributes: {
                 exclude: ['createdAt', 'updatedAt'],
             },
         });
-        if (!product.length) {
-            // if the product(s) not found
-            logger.logNotFound(`ProductList`, event)
-
+        if (!pages.length) {
+            // executes if no page found
+            await logger.logRequest('listPage', event)
             return response(404, {
                 message: translate('errors', 'notfound')
             })
-
         }
-        // pagination related work
-        const count = await Product.count()
-
-
-        const pagination = {
-            total: count,
-            current: parseInt(page) || 1,
-            first: 1,
-            last: count ? Math.ceil(count / pageSize) : 1,
-            next: page < Math.ceil(count / pageSize) ? parseInt(page) + 1 : 0,
-        }
-        // logs the response if everything goes well
-        logger.logResponse(`ProductList`, event)
-        // return the response
+        // logs the response if all went good
+        await logger.logResponse('listPage', event)
         return response(200, {
             message: translate('messages', 'success'),
-            data: product,
-            pagination
+            data: pages,
         })
 
     } catch (error) {
-        // execute incase of internal server error
-        logger.logFailure(`ProductList`, event, error)
+        // execute in case of internal server error
+        await logger.logFailure('listPage', event, error)
         return response(500, {
             message: translate('errors', 'general'),
         })

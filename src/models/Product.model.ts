@@ -1,8 +1,21 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model, Sequelize } from 'sequelize';
 import sequelize from '../database'
-const Sequelize = sequelize()
 
-const Model = Sequelize.define('Products', {
+const db: Sequelize = sequelize()
+
+interface Product extends Model {
+    productID: string;
+    productName: string;
+    pictureUrl: string;
+    shortDescription: string;
+    benefits: string;
+    filterColor: string;
+    filterSize: string;
+    productType: 'Gift' | 'Household';
+    price: number;
+}
+
+const ProductModel = db.define<Product>('Products', {
     productID: {
         type: DataTypes.UUID,
         primaryKey: true,
@@ -34,7 +47,7 @@ const Model = Sequelize.define('Products', {
         allowNull: false,
     },
     productType: {
-        type: DataTypes.ENUM(['Gift', 'Household'])
+        type: DataTypes.ENUM('Gift', 'Household')
     },
     price: {
         type: DataTypes.DECIMAL,
@@ -42,4 +55,4 @@ const Model = Sequelize.define('Products', {
     }
 }, { timestamps: false });
 
-export default Model;
+export default ProductModel;

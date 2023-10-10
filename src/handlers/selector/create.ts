@@ -9,31 +9,42 @@ import { v4 as uuid } from 'uuid'
 import translate from '../../helpers/translate'
 import response from '../../helpers/response'
 import Logger from '../../helpers/logger'
+import { APIGatewayProxyHandler, APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+
 const logger = new Logger()
 
-/**
- *
- * @param {*} event
- * @param {*} context
- */
 
-exports.handler = async function (event, context) {
+interface Selector {
+    findOne: Function;
+    create: Function;
+    status: string;
+    selectorID: string;
+    email: string;
+}
+
+/**
+ * @param {APIGatewayProxyEvent} event
+ * @param {any} context
+ * @returns {Promise<APIGatewayProxyResult>}
+ */
+export const handler: APIGatewayProxyHandler = async (event, context) => {
     // initialize the logger
     await logger.initiateLogger()
     try {
         // logs the initial request
         await logger.logRequest('createSelector', event);
         context.callbackWaitsForEmptyEventLoop = false
-        let body = JSON.parse(event.body)
+        let body = JSON.parse(event.body || '{}')
 
         if (body == undefined) {
             body = {}
         }
 
         // first try to find the selectors
-        let selector = await Selector.findOne({ where: { email: body.email } })
+        let selector: Selector | null = await Selector.findOne({ where: { email: body.email } }, {})
+        console.log(selector, 'selector')
         if (selector && selector.status == 'blocked') {
-            return response(409, {
+            return response(403, {
                 message: translate('errors', 'user.blocked'),
             })
         }
@@ -52,7 +63,7 @@ exports.handler = async function (event, context) {
         // return the response
         return response(200, {
             message: translate('messages', 'success'),
-            selectorID: selector.selectorID
+            selectorID: selector?.selectorID
         })
 
     } catch (error) {

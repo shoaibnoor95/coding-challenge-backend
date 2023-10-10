@@ -1,14 +1,25 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model, Sequelize } from 'sequelize';
 import sequelize from '../database'
-const Sequelize = sequelize()
-const Question = Sequelize.define('Questions', {
+
+const db: Sequelize = sequelize()
+
+interface Question extends Model {
+    questionID: string;
+    type: 'card' | 'sliders' | 'buttons';
+    conditional: boolean;
+    answerID: string[] | null;
+    pageID: string;
+    text: string;
+}
+
+const QuestionModel = db.define<Question>('Questions', {
     questionID: {
         type: DataTypes.UUID,
         primaryKey: true,
         allowNull: false,
     },
     type: {
-        type: DataTypes.ENUM({ values: ['card', 'sliders', 'buttons'] }),
+        type: DataTypes.ENUM('card', 'sliders', 'buttons'),
         allowNull: false
     },
     conditional: {
@@ -20,10 +31,8 @@ const Question = Sequelize.define('Questions', {
         type: DataTypes.ARRAY(DataTypes.STRING),
         allowNull: true,
     },
-
     pageID: {
         type: DataTypes.UUID,
-        foreignKey: true,
         allowNull: false,
     },
     text: { type: DataTypes.STRING, allowNull: false }
@@ -31,4 +40,4 @@ const Question = Sequelize.define('Questions', {
     timestamps: false
 });
 
-export default Question;
+export default QuestionModel;

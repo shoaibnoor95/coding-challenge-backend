@@ -1,15 +1,11 @@
 import * as pg from 'pg';
 import { Sequelize } from 'sequelize';
 
+let sequelize: Sequelize | null = null;
 
-let sequelize = null;
-const initializeSequlize = () => {
-
-
+const initializeSequlize = (): Sequelize => {
     try {
-
         if (sequelize) {
-
             return sequelize;
         }
 
@@ -22,6 +18,6 @@ const initializeSequlize = () => {
         console.log(error)
         process.exit(1);
     }
-
 };
-export default initializeSequlize
+
+export default initializeSequlize;

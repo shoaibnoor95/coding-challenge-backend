@@ -41,7 +41,6 @@ describe('Page Creation', () => {
                 'Content-Type': 'application/json',
             },
         }).then((response) => {
-            // Ensure the response status code is 200 (OK) or 201 (Created), depending on your API
             expect(response.status).to.be.eq(409);
             // Assert on the response body
             expect(response.body).to.have.property('message');

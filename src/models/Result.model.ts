@@ -1,8 +1,18 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model, Sequelize } from 'sequelize';
 import sequelize from '../database'
-const Sequelize = sequelize()
 
-const Model = Sequelize.define('Results', {
+const db: Sequelize = sequelize()
+
+interface Result extends Model {
+    resultID: string;
+    SelectorID: string;
+    questionaireID: string;
+    resultSummary: any;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+const ResultModel = db.define<Result>('Results', {
     resultID: {
         type: DataTypes.UUID,
         primaryKey: true,
@@ -22,7 +32,6 @@ const Model = Sequelize.define('Results', {
     },
     createdAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
     updatedAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
-
 }, { timestamps: true });
 
-export default Model;
+export default ResultModel;

@@ -1,9 +1,16 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model, Sequelize } from 'sequelize';
 import sequelize from '../database'
-const Sequelize = sequelize()
 
+const db: Sequelize = sequelize()
 
-const Model = Sequelize.define('RecordAnswer', {
+interface RecordedAnswer extends Model {
+    RAnswerID: string;
+    questionaireID: string;
+    questionID: string[];
+    answer: string[] | null;
+}
+
+const RecordedAnswerModel = db.define<RecordedAnswer>('RecordAnswer', {
     RAnswerID: {
         type: DataTypes.UUID,
         primaryKey: true,
@@ -14,7 +21,7 @@ const Model = Sequelize.define('RecordAnswer', {
         allowNull: false,
     },
     questionID: {
-        type: DataTypes.UUID,
+        type: DataTypes.ARRAY(DataTypes.UUID),
         allowNull: false,
         defaultValue: [],
     },
@@ -25,4 +32,4 @@ const Model = Sequelize.define('RecordAnswer', {
     }
 }, { timestamps: false });
 
-export default Model
+export default RecordedAnswerModel;

@@ -37,11 +37,10 @@ provider:
     IS_OFFLINE: $(env:IS_OFFLINE)
 
 plugins:
-  - serverless-bundle # For creation of bundle with the core javascript
   - serverless-offline # For running the application offline
   - serverless-dotenv-plugin # For consuming variables from .env
   - serverless-apigw-binary # For controlling api gateway
-
+  - serverless-esbuild
 functions:
   create-selector:
     handler: src/handlers/selector/create.handler

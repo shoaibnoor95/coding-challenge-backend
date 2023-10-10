@@ -1,12 +1,21 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model, Sequelize } from 'sequelize';
 import sequelize from '../database'
-const Sequelize = sequelize()
-const Model = Sequelize.define('Conditions', {
+
+const db: Sequelize = sequelize()
+
+interface Condition extends Model {
+    answerID: string;
+    conditionID: string;
+    urlEndPoint: number | null;
+    questionID: string;
+}
+
+const ConditionModel = db.define<Condition>('Conditions', {
     answerID: {
         type: DataTypes.UUID,
         allowNull: false,
     },
-    ConditionID: {
+    conditionID: {
         type: DataTypes.UUID,
         primaryKey: true,
         allowNull: false,
@@ -17,9 +26,8 @@ const Model = Sequelize.define('Conditions', {
     },
     questionID: {
         type: DataTypes.UUID,
-        foreignKey: true,
         allowNull: false,
     }
 }, { timestamps: false });
 
-export default Model;
+export default ConditionModel;

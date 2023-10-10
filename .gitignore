@@ -1,4 +1,5 @@
-.webpack
+.esbuild
+cypress
 .DS_Store
 node_modules
 # Log files

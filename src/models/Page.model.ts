@@ -1,9 +1,16 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model, Sequelize } from 'sequelize';
 import sequelize from '../database'
-const Sequelize = sequelize()
 
+const db: Sequelize = sequelize()
 
-const Page = Sequelize.define('Pages', {
+interface Page extends Model {
+    pageID: string;
+    urlEndpoint: number;
+    questionID: string[];
+    conditional: string[] | null;
+}
+
+const PageModel = db.define<Page>('Pages', {
     pageID: {
         type: DataTypes.UUID,
         primaryKey: true,
@@ -25,4 +32,4 @@ const Page = Sequelize.define('Pages', {
     }
 }, { timestamps: false });
 
-export default Page
+export default PageModel;

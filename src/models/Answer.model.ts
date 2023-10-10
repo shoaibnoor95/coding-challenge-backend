@@ -1,8 +1,18 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model, Sequelize } from 'sequelize';
 import sequelize from '../database'
-const Sequelize = sequelize()
 
-const Model = Sequelize.define('Answers', {
+const db: Sequelize = sequelize()
+
+interface Answer extends Model {
+    answerID: string;
+    value: string | null;
+    questionID: string;
+    conditional: boolean;
+    creationTimestamp: Date;
+    modifiedTimestamp: Date;
+}
+
+const AnswerModel = db.define<Answer>('Answers', {
     answerID: {
         type: DataTypes.UUID,
         primaryKey: true,
@@ -14,7 +24,6 @@ const Model = Sequelize.define('Answers', {
     },
     questionID: {
         type: DataTypes.STRING,
-        foreignKey: true,
         allowNull: false,
     },
     conditional: {
@@ -32,4 +41,4 @@ const Model = Sequelize.define('Answers', {
     }
 }, { timestamps: false });
 
-export default Model;
+export default AnswerModel;
