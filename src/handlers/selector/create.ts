@@ -41,8 +41,7 @@ export const handler: APIGatewayProxyHandler = async (event, context) => {
         }
 
         // first try to find the selectors
-        let selector: Selector | null = await Selector.findOne({ where: { email: body.email } }, {})
-        console.log(selector, 'selector')
+        let selector: any = await Selector.findOne({ where: { email: body.email } })
         if (selector && selector.status == 'blocked') {
             return response(403, {
                 message: translate('errors', 'user.blocked'),

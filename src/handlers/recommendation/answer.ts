@@ -31,7 +31,6 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
         }
         // Find a questionnaire if the questionnaire
         const questionaire: any = await Questionaire.findOne({ where: { questionaireID: request.params.id } });
-
         if (!questionaire || questionaire.status == 'completed') {
             // If the questionnaire is not available or if it is completed then execute this block
             return response(404, {
@@ -40,6 +39,7 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
         }
         let conditional: any;
         let conditionalAnswerId = null;
+
         const questionIDs = Object.keys(body);
 
         for (let i = 0; i < questionIDs.length; i++) {
@@ -51,6 +51,7 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
                 if (el.skipped) {
                     return 'skipped';
                 }
+
                 if (el.conditional) {
                     conditional = true;
                     conditionalAnswerId = el.answerID;
@@ -58,21 +59,26 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
                 }
                 return el.value;
             });
+
             if (answers.indexOf('skipped') == -1) {
-                // If the answer is skipped then don't save it
+                // If the answer is skipped then don't save it   
                 await RecordedAnswer.create({
                     RAnswerID: await uuid(),
-                    questionID: questionIDs[i],
+                    questionID: [questionIDs[i]],
                     questionaireID: request.params.id,
                     answer: answers,
                 });
+
             }
+
         }
+
         // Find out the next page 
         let newPage = parseInt(questionaire.pageUrlEndpoint) + 1;
 
         const updatedData: any = {};
         const nextPage = await Page.findOne({ where: { urlEndpoint: newPage } });
+
         if (conditional) {
             conditional = await Condition.findOne({ where: { answerID: conditionalAnswerId } });
             updatedData.pageUrlEndpoint = conditional.urlEndPoint;
@@ -91,6 +97,7 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
             await questionaire.update(updatedData);
             // Logs the response if all went good
             await logger.logResponse('postAnswer', event);
+
             // Return the response
             return response(200, {
                 message: translate('messages', 'success'),
@@ -109,7 +116,6 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
             });
         }
     } catch (error) {
-        console.log(error)
         // Execute in case of internal server error
         await logger.logFailure('postAnswer', event, error);
         return response(500, {

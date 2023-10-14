@@ -81,7 +81,7 @@ module.exports = {
       }
     });
 
-    await queryInterface.createTable('RecordAnswer', {
+    await queryInterface.createTable('RecordAnswers', {
       RAnswerID: {
         type: Sequelize.UUID,
         primaryKey: true,
@@ -267,7 +267,7 @@ module.exports = {
     await queryInterface.dropTable('Answers');
     await queryInterface.dropTable('Products');
     await queryInterface.dropTable('Questionaires');
-    await queryInterface.dropTable('RecordAnswer');
+    await queryInterface.dropTable('RecordAnswers');
     await queryInterface.dropTable('Conditions')
   }
 };

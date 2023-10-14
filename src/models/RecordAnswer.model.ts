@@ -10,7 +10,7 @@ interface RecordedAnswer extends Model {
     answer: string[] | null;
 }
 
-const RecordedAnswerModel = db.define<RecordedAnswer>('RecordAnswer', {
+const RecordedAnswerModel = db.define<RecordedAnswer>('RecordAnswers', {
     RAnswerID: {
         type: DataTypes.UUID,
         primaryKey: true,
