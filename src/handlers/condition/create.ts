@@ -2,27 +2,25 @@
 import '../../database'
 import { Answer, Condition } from '../../models/index'
 
-
 // importing helpers
 import translate from '../../helpers/translate'
 import response from '../../helpers/response'
 import { v4 as uuid } from 'uuid'
 import Logger from '../../helpers/logger'
 const logger = new Logger()
-/**
- *
- * @param {*} event
- * @param {*} context
- */
 
-exports.handler = async function (event, context) {
+/**
+ * @param {AWSLambda.APIGatewayEvent} event
+ * @param {AWSLambda.Context} context
+ */
+export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) => {
     // initializing logger
     await logger.initiateLogger()
     try {
         // logging the request
         await logger.logRequest('createCondition', event);
         context.callbackWaitsForEmptyEventLoop = false
-        let body = JSON.parse(event.body)
+        let body = JSON.parse(event.body || '{}');
         if (body == undefined) {
             body = {}
         }

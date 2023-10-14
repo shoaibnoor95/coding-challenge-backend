@@ -8,14 +8,11 @@ import response from '../../helpers/response'
 import Logger from '../../helpers/logger'
 const logger = new Logger()
 
-
 /**
- *
- * @param {*} event
- * @param {*} context
+ * @param {AWSLambda.APIGatewayEvent} event
+ * @param {AWSLambda.Context} context
  */
-
-exports.handler = async function (event, context) {
+export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) => {
     // initialize the logger
     await logger.initiateLogger()
     try {
@@ -23,14 +20,16 @@ exports.handler = async function (event, context) {
         await logger.logRequest('viewCondition', event)
         context.callbackWaitsForEmptyEventLoop = false
 
-        const request = {}
-        // obtain query params
+        const request: any = {};
+        // Obtain query params
         request.query = event.queryStringParameters
             ? event.queryStringParameters
-            : {}
-        request.params = event.pathParameters
+            : {};
+
+        request.params = event.pathParameters;
         const id =
-            request.params && request.params.id
+            request.params && request.params.id;
+
         // Find only one page that matches with the particular pageID
         const condition = await Condition.findOne({
             where: { ConditionID: id }, attributes: {

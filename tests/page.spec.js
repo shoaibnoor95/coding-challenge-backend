@@ -3,7 +3,7 @@ describe('Page Creation', () => {
     it('should create a new page', () => {
         // Define the request payload as per your API requirements
         const requestBody = {
-            urlEndpoint: 40, // Change to a unique URL
+            urlEndpoint: 12, // Change to a unique URL
         };
 
         // Send a POST request to the API endpoint
@@ -127,6 +127,61 @@ describe('Page listing retrival', () => {
 
     it('should return a 500 error in case of internal server error', () => {
         cy.request({ method: 'GET', url: `/dev/foxbase/page?page=1&pageSize=abc`, failOnStatusCode: false }).then((response) => {
+            expect(response.status).to.equal(500);
+            expect(response.body).to.have.property('message');
+        });
+    });
+});
+
+
+describe('Retrieve Question By Url ', () => {
+    it('should retrieve a list of pages', () => {
+        cy.request({
+            method: 'GET',
+            url: `/dev/foxbase/page/question/1`
+        }).then((response) => {
+            expect(response.status).to.equal(200);
+            expect(response.body).to.have.property('message');
+            expect(response.body).to.have.property('data');
+        });
+    });
+
+    it('should return a 404 error if no pages are found', () => {
+        cy.request({ method: 'GET', url: `/dev/foxbase/page/question/1400`, failOnStatusCode: false }).then((response) => {
+            expect(response.status).to.equal(404);
+            expect(response.body).to.have.property('message');
+        });
+    });
+
+    it('should return a 500 error in case of internal server error', () => {
+        cy.request({ method: 'GET', url: `/dev/foxbase/page/question/abcd`, failOnStatusCode: false }).then((response) => {
+            expect(response.status).to.equal(500);
+            expect(response.body).to.have.property('message');
+        });
+    });
+});
+
+describe('Retrieve Question By Url ', () => {
+    it('should retrieve a list of pages', () => {
+        cy.request({
+            method: 'GET',
+            url: `/dev/foxbase/page/question/1`
+        }).then((response) => {
+            expect(response.status).to.equal(200);
+            expect(response.body).to.have.property('message');
+            expect(response.body).to.have.property('data');
+        });
+    });
+
+    it('should return a 404 error if no pages are found', () => {
+        cy.request({ method: 'GET', url: `/dev/foxbase/page/question/1400`, failOnStatusCode: false }).then((response) => {
+            expect(response.status).to.equal(404);
+            expect(response.body).to.have.property('message');
+        });
+    });
+
+    it('should return a 500 error in case of internal server error', () => {
+        cy.request({ method: 'GET', url: `/dev/foxbase/page/question/abcd`, failOnStatusCode: false }).then((response) => {
             expect(response.status).to.equal(500);
             expect(response.body).to.have.property('message');
         });

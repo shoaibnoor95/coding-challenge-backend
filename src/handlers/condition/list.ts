@@ -7,28 +7,27 @@ import translate from '../../helpers/translate'
 import response from '../../helpers/response'
 import Logger from '../../helpers/logger'
 const logger = new Logger()
-
-
 /**
  *
  * @param {*} event
  * @param {*} context
  */
-
-exports.handler = async function (event, context) {
-    // initializing the logger
+interface Event {
+    body: any,
+    queryStringParameters?: any
+}
+export const handler = async (event: Event, context: any) => {
     await logger.initiateLogger()
     try {
         // log the initial request
         await logger.logRequest('listCondition', event)
         context.callbackWaitsForEmptyEventLoop = false
 
-        const request = {}
+        const request = { query: { pageSize: null, page: 0 }, }
         // obtain query params
         request.query = event.queryStringParameters
             ? event.queryStringParameters
             : {}
-
 
         // find the list of the conditions
         const conditions = await Condition.findAll({
@@ -37,7 +36,7 @@ exports.handler = async function (event, context) {
             },
         });
         if (!conditions.length) {
-            // executes if no condtions found
+            // executes if no conditions found
             await logger.logRequest('listCondition', event)
             return response(404, {
                 message: translate('errors', 'notfound')
