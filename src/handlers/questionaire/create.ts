@@ -24,12 +24,9 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
         context.callbackWaitsForEmptyEventLoop = false;
         let body = JSON.parse(event.body || '{}');
 
-        if (body == undefined) {
-            body = {};
-        }
 
         // Fetch the selector
-        const selector = await Selector.findOne({ where: { selectorID: body.selectorID } }, {});
+        const selector = await Selector.findOne({ where: { selectorID: body.selectorID } });
         if (!selector) {
             // Executes in case the selector does not exist
             // Log the incident

@@ -24,9 +24,7 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
 
         context.callbackWaitsForEmptyEventLoop = false;
         let body = JSON.parse(event.body || '{}');
-        if (body == undefined) {
-            body = {};
-        }
+       
 
         // Find a page with a subsequent pageID
         const page = await Page.findOne({ where: { pageID: body.pageID } });

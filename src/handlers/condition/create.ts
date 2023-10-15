@@ -6,6 +6,8 @@ import { Answer, Condition } from '../../models/index'
 import translate from '../../helpers/translate'
 import response from '../../helpers/response'
 import { v4 as uuid } from 'uuid'
+import { Op } from "sequelize";
+
 import Logger from '../../helpers/logger'
 const logger = new Logger()
 
@@ -21,31 +23,51 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
         await logger.logRequest('createCondition', event);
         context.callbackWaitsForEmptyEventLoop = false
         let body = JSON.parse(event.body || '{}');
-        if (body == undefined) {
-            body = {}
-        }
-        const isConditionExist = await Condition.findOne({ where: { answerID: body.answerID } })
-        if (isConditionExist) {
-            return response(409, {
-                message: translate('validations', 'condtion.exist'),
+
+        if (!body.conditions || !Array.isArray(body.conditions) || body.conditions.length !== 2) {
+            // if condition is already exist for this answer id than return with the status code of 409
+            return response(422, {
+                message: translate('validations', 'condtion.not_valid'),
             })
         }
-        // generating a new uuid
-        const conditionID = await uuid()
-        // creating a new page
-        await Condition.create({
-            ConditionID: conditionID,
-            questionID: body.questionID,
-            urlEndPoint: body.urlEndPoint,
-            answerID: body.answerID
+
+        const isConditionExist = await Condition.findOne({
+            where: {
+                [Op.or]: [
+                    { answerID: body.conditions[0].answerID },
+                    { answerID: body.conditions[1].answerID }
+                ]
+            }
         })
-        // update that answer as well
-        await Answer.update({ conditional: true }, { where: { answerID: body.answerID, questionID: body.questionID } })
+
+        if (isConditionExist) {
+            // if condition is already exist for this answer id than return with the status code of 409
+            return response(409, {
+                message: translate('validations', 'condtion.exist'),
+                data: isConditionExist
+            })
+        }
+
+        await body.condtions.forEach(async element => {
+            // generating a new uuid
+            const conditionID = await uuid()
+
+            // creating a new condition
+            await Condition.create({
+                ConditionID: conditionID,
+                questionID: element.questionID,
+                urlEndPoint: element.urlEndPoint,
+                answerID: element.answerID
+            })
+            // update that answer as well
+            await Answer.update({ conditional: true }, { where: { answerID: element.answerID, questionID: element.questionID } })
+
+        });
+
         // logs the response if all went good
         await logger.logResponse('createCondition', event);
         return response(200, {
             message: translate('messages', 'success'),
-            conditionID
         })
 
     } catch (error) {

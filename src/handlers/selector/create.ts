@@ -36,10 +36,6 @@ export const handler: APIGatewayProxyHandler = async (event, context) => {
         context.callbackWaitsForEmptyEventLoop = false
         let body = JSON.parse(event.body || '{}')
 
-        if (body == undefined) {
-            body = {}
-        }
-
         // first try to find the selectors
         let selector: any = await Selector.findOne({ where: { email: body.email } })
         if (selector && selector.status == 'blocked') {

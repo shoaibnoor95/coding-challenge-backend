@@ -21,9 +21,7 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
         await logger.logRequest('createPage', event);
         context.callbackWaitsForEmptyEventLoop = false;
         let body = JSON.parse(event.body || '{}');
-        if (body == undefined) {
-            body = {};
-        }
+
         const isPageExist = await Page.findOne({ where: { urlEndpoint: body.urlEndpoint } });
         if (isPageExist) {
             return response(409, {

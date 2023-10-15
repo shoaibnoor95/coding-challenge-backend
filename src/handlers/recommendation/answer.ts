@@ -26,9 +26,7 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
         const request: any = {};
         request.params = event.pathParameters;
 
-        if (body == undefined) {
-            body = {};
-        }
+       
         // Find a questionnaire if the questionnaire
         const questionaire: any = await Questionaire.findOne({ where: { questionaireID: request.params.id } });
         if (!questionaire || questionaire.status == 'completed') {

@@ -23,13 +23,10 @@ export const handler: APIGatewayProxyHandler = async (event, context) => {
         await logger.logRequest('recomend', event);
         context.callbackWaitsForEmptyEventLoop = false;
 
-        let body = JSON.parse(event.body || '{}');
         const request: any = {};
         request.params = event.pathParameters;
 
-        if (body == undefined) {
-            body = {};
-        }
+
         const result: any = await Questionaire.findOne({
             where: { questionaireID: request.params.id },
             // Include questions of that page too

@@ -30,7 +30,7 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
         const id =
             request.params && request.params.id;
 
-        // Find only one page that matches with the particular pageID
+        // Find only one page that matches with the particular questionID
         const condition = await Condition.findOne({
             where: { ConditionID: id }, attributes: {
                 exclude: ['createdAt', 'updatedAt'],

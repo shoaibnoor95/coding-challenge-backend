@@ -6,6 +6,7 @@
         "notexist": "Page does not exist"
     },
     "condtion": {
-        "exist": "Condition already exist with this answer"
+        "exist": "Condition already exist with one of the following answers",
+        "not_valid": "Only two conditions supposed to be present for connecting two answer with one and another."
     }
 }
