@@ -30,7 +30,7 @@ provider:
   stage: ${opt:stage, 'dev'}
 
   tags:
-    company: numa
+    company: foxbase
     module: algorithm
 
   environment:

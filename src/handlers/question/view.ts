@@ -35,32 +35,33 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
         }
 
         // Update the question of a specific questionID
-        const updatedQuestion = await Question.update(body, {
+        const viewQuestion = await Question.findOne({
             where: {
                 questionID: id,
+                status: "active"
             },
         });
 
-        if (updatedQuestion.length && updatedQuestion[0] > 0) {
+        if (viewQuestion) {
             // Logs the final response if all went well
-            await logger.logResponse(`updateQuestion`, event);
+            await logger.logResponse(`viewQuestion`, event);
 
             return response(200, {
                 message: translate('messages', 'success'),
-                updatedQuestion,
+                viewQuestion,
             });
         } else {
             // Logs question not found
-            await logger.logNotFound(`updateQuestion`, event);
+            await logger.logNotFound(`viewQuestion`, event);
 
             return response(404, {
                 message: translate('errors', 'notfound'),
-                updatedQuestion,
+                viewQuestion,
             });
         }
     } catch (error) {
         // Execute in case of internal server error
-        await logger.logFailure(`updateQuestion`, event, error);
+        await logger.logFailure(`viewQuestion`, event, error);
         return response(500, {
             message: translate('errors', 'general'),
         });

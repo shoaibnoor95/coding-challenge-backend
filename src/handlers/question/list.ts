@@ -35,6 +35,7 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
 
         // Find all the questions within the specific limit and offset (skip)
         const question = await Question.findAll({
+            where: { status: "active" },
             limit: pageSize,
             offset,
         });
@@ -49,7 +50,7 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
         }
 
         // Pagination works
-        const count = await Question.count();
+        const count = await Question.count({ where: { status: "active" } });
 
         const pagination = {
             total: count,

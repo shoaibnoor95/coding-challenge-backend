@@ -14,6 +14,7 @@ module.exports = {
         pageID: uuidv4(),
         answerID: answerText[i].answerID,
         text: questionsText[i].text,
+        status: "active"
       }),
 
     );
@@ -23,7 +24,8 @@ module.exports = {
         return {
           answerID: el.answerID[j],
           value: element,
-          questionID: questions[i].questionID
+          questionID: questions[i].questionID,
+
         }
       })
     })

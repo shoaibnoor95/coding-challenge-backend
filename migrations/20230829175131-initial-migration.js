@@ -65,7 +65,7 @@ module.exports = {
         allowNull: false,
 
       },
-      ConditionID: {
+      conditionID: {
         type: Sequelize.UUID,
         primaryKey: true,
         allowNull: false,
@@ -127,7 +127,12 @@ module.exports = {
         foreignKey: true,
         allowNull: false,
       },
-      text: { type: Sequelize.STRING, allowNull: false }
+      text: { type: Sequelize.STRING, allowNull: false },
+      status: {
+        type: Sequelize.ENUM({ values: ["deleted", "active"] }),
+        allowNull: false,
+        defaultValue: "active"
+      },
     });
     await queryInterface.createTable('Selectors', {
       selectorID: {

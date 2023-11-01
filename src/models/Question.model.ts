@@ -10,6 +10,7 @@ interface Question extends Model {
     answerID: string[] | null;
     pageID: string;
     text: string;
+    status: string
 }
 
 const QuestionModel = db.define<Question>('Questions', {
@@ -35,6 +36,7 @@ const QuestionModel = db.define<Question>('Questions', {
         type: DataTypes.UUID,
         allowNull: false,
     },
+    status: { type: DataTypes.ENUM("deleted", "active"), defaultValue: "active" },
     text: { type: DataTypes.STRING, allowNull: false }
 }, {
     timestamps: false

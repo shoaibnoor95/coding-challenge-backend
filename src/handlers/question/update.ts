@@ -38,6 +38,7 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
         const updatedQuestion = await Question.update(body, {
             where: {
                 questionID: id,
+                status: "active"
             },
         });
 

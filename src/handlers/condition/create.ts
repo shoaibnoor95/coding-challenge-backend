@@ -54,7 +54,7 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
 
             // creating a new condition
             await Condition.create({
-                ConditionID: conditionID,
+                conditionID: conditionID,
                 questionID: element.questionID,
                 urlEndPoint: element.urlEndPoint,
                 answerID: element.answerID

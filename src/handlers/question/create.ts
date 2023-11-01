@@ -44,11 +44,13 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
         let answerID: string[] = [];
 
         if (body.answers && body.answers.length) {
+           
             const newAnswer = body.answers.map((el: any) => {
+                console.log(el.value)
                 // Iterate through to get answers
                 el.answerID = uuid();
                 answerID.push(el.answerID);
-                el.value = body.value;
+                el.value = el.value;
                 el.questionID = questionID;
                 return el;
             });

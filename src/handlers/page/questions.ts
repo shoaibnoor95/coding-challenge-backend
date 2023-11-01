@@ -30,11 +30,12 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
             request.params && request.params.id;
 
         // Find a page that comes in the URL
-        const pageWithQuestions = await Page.findOne({
+        const pageWithQuestions: any = await Page.findOne({
             where: { urlEndpoint: id },
             // Include questions of that page too
             include: {
                 model: Question,
+                where: { status: 'active' }
             },
         });
         if (!pageWithQuestions) {
@@ -45,9 +46,12 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
                 data: pageWithQuestions,
             });
         }
-
+        const questionIds = await pageWithQuestions.Questions.map((el: any) => {
+            return el.questionID
+        })
+        pageWithQuestions.questionID = questionIds
         // Find all the answers that are present on the page 
-        const answers = await Answer.findAll({ where: { questionID: pageWithQuestions.questionID } });
+        const answers = await Answer.findAll({ where: { questionID: questionIds } });
 
         // Logs the response if all went well
         await logger.logResponse('viewQuestionsInPage', event);
