@@ -65,7 +65,7 @@ module.exports = {
         allowNull: false,
 
       },
-      conditionID: {
+      ConditionID: {
         type: Sequelize.UUID,
         primaryKey: true,
         allowNull: false,

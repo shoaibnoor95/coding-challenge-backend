@@ -48,13 +48,12 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
             })
         }
 
-        await body.condtions.forEach(async element => {
+        await body.conditions.forEach(async element => {
             // generating a new uuid
             const conditionID = await uuid()
-
             // creating a new condition
             await Condition.create({
-                conditionID: conditionID,
+                ConditionID: conditionID,
                 questionID: element.questionID,
                 urlEndPoint: element.urlEndPoint,
                 answerID: element.answerID
@@ -72,6 +71,7 @@ export const handler: AWSLambda.APIGatewayProxyHandler = async (event, context) 
 
     } catch (error) {
         // execute in case of internal server error
+        console.log(error)
         await logger.logFailure('createCondition', event, error);
         return response(500, {
             message: translate('errors', 'general'),

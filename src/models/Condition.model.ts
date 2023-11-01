@@ -5,7 +5,7 @@ const db: Sequelize = sequelize()
 
 interface Condition extends Model {
     answerID: string;
-    conditionID: string;
+    ConditionID: string;
     urlEndPoint: number | null;
     questionID: string;
 }
@@ -15,7 +15,7 @@ const ConditionModel = db.define<Condition>('Conditions', {
         type: DataTypes.UUID,
         allowNull: false,
     },
-    conditionID: {
+    ConditionID: {
         type: DataTypes.UUID,
         primaryKey: true,
         allowNull: false,
